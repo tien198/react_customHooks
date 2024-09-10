@@ -3,10 +3,11 @@ import Places from './Places.jsx';
 
 import Error from './Error.jsx';
 import { sortPlacesByDistance } from '../loc.js';
-import { fetchPlaceFromServer } from '../http.js';
+import { fetchAvailablePlaces } from '../http.js';
 
 
 export default function AvailablePlaces({ onSelectPlace }) {
+  // Triple state need to fetch data
   const [availablePlaces, setAvailablePlaces] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState()
@@ -14,7 +15,7 @@ export default function AvailablePlaces({ onSelectPlace }) {
   useEffect(() => {
     async function fetchPlaces() {
       try {
-        const fetchedPlaces = await fetchPlaceFromServer()
+        const fetchedPlaces = await fetchAvailablePlaces()
         navigator.geolocation.getCurrentPosition((position) => {
 
           const sortedPlaces = sortPlacesByDistance(
@@ -22,8 +23,9 @@ export default function AvailablePlaces({ onSelectPlace }) {
             position.coords.latitude,
             position.coords.longitude
           )
-
           setAvailablePlaces(sortedPlaces)
+
+          setAvailablePlaces(fetchedPlaces)
           setIsLoading(false)
         })
       }
